@@ -1,2 +1,3 @@
-# C-Compiler
-ECE466 (Compilers) Project
+###### ECE466 (Compilers) Project
+# C Compiler
+## Andrew Lorber & Henry Son
