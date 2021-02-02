@@ -23,6 +23,7 @@ int line_number = 1;
 %x STRING
 %x INT_NUM
 %x FLOAT_NUM
+%x COMMENT
 
 /* NUMERIC CONSTANTS */
 DEC     [1-9]+[0-9]*
@@ -55,7 +56,11 @@ P       [pP][+-]?{DEC}+
 [\n]                {line_number++;}
 
  /* COMMENTS */
-
+"//".*\n            {line_number++;}
+"/*"                {BEGIN COMMENT;}
+<COMMENT>"*/"       {BEGIN INITIAL;}
+<COMMENT>.+         {/* Ignores comment */;}
+<COMMENT>\n         {line_number++;}
 
  /* NUMBERS */
 {DEC}           {yylval.number.i_value = strtoll(yytext, NULL, 10);
