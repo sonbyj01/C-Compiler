@@ -25,12 +25,12 @@ int line_number = 1;
 %x NUM
 
 /* NUMERIC CONSTANTS */
-DEC		[1-9]+[0-9]*
-OCT		0[0-7]+
-HEX		0[xX][a-fA-F0-9]+
-FLO 	[0-9]*\.[0-9]*
-EXP		[eE][+-]?{DEC}+
-P		[pP][+-]?{DEC}+
+DEC     [1-9]+[0-9]*
+OCT     0[0-7]+
+HEX     0[xX][a-fA-F0-9]+
+FLO     [0-9]*\.[0-9]*
+EXP     [eE][+-]?{DEC}+
+P       [pP][+-]?{DEC}+
 
 %%
  /* ------- */
@@ -66,12 +66,12 @@ P		[pP][+-]?{DEC}+
                  BEGIN NUM;}
 {FLO}           {yylval.number.d_value = ;
                  BEGIN NUM;}
-{EXP}
+
 
 <NUM>[uU]       {yylval.number.sign = 0;}
 <NUM>(ll|LL)    {yylval.number.size_specifier = LONGLONG}
 <NUM>[lL]       {yylval.number.size_specifier = LONG}
-<NUM>{p}
+<NUM>
 <NUM>[\t\r\v\f ]+   {BEGIN INITIAL; 
                      return NUMBER;}
 [\n]                {line_number++; 
@@ -105,43 +105,43 @@ indsel          {return INDSEL}
 "^="            {return XOREQ}
 
  /* KEYWORDS */
-auto			{return AUTO;}
-break			{return BREAK;}
-case			{return CASE;}
-char			{return CHAR;}
-const			{return CONST;}
-continue		{return CONSTANT;}
-default		    {return DEFAULT;}
-do			    {return DO;}
-double		    {return DOUBLE;}
-else			{return ELSE;}
-enum			{return ENUM;}
-extern		    {return EXTERN;}
-float			{return FLOAT;}
-for			    {return FOR;}
-goto 			{return GOTO;}
-if			    {return IF;}
-inline		    {return INLINE;}
-int			    {return INT;}
-long			{return LONG;}
-register		{return REGISTER;}
+auto            {return AUTO;}
+break           {return BREAK;}
+case            {return CASE;}
+char            {return CHAR;}
+const           {return CONST;}
+continue        {return CONSTANT;}
+default         {return DEFAULT;}
+do              {return DO;}
+double          {return DOUBLE;}
+else            {return ELSE;}
+enum            {return ENUM;}
+extern          {return EXTERN;}
+float           {return FLOAT;}
+for             {return FOR;}
+goto            {return GOTO;}
+if              {return IF;}
+inline          {return INLINE;}
+int             {return INT;}
+long            {return LONG;}
+register        {return REGISTER;}
 restrict        {return RESTRICT;}
-return		    {return RETURN;}
-short 		    {return SHORT;}
-signed		    {return SIGNED;}
-sizeof		    {return SIZEOF;}
-static		    {return STATIC;}
-struct		    {return STRUCT;}
-switch		    {return SWITCH;}
-typedef		    {return TYPEDEF;}
-union			{return UNION;}
-unsigned		{return UNSIGNED;}
-void			{return VOID;}
-volatile 		{return VOLATILE;}
-while			{return WHILE;}
-_bool			{return _BOOL;}
-_complex		{return _COMPLEX;}
-_imaginary	    {return _IMAGINARY;}
+return          {return RETURN;}
+short           {return SHORT;}
+signed          {return SIGNED;}
+sizeof          {return SIZEOF;}
+static          {return STATIC;}
+struct          {return STRUCT;}
+switch          {return SWITCH;}
+typedef         {return TYPEDEF;}
+union           {return UNION;}
+unsigned        {return UNSIGNED;}
+void            {return VOID;}
+volatile        {return VOLATILE;}
+while           {return WHILE;}
+_bool           {return _BOOL;}
+_complex        {return _COMPLEX;}
+_imaginary      {return _IMAGINARY;}
 
  /* IDENTIFIERS */
 [a-zA-Z_][a-zA-Z0-9_]*		{yylval.ident.name = strdup(yytext); return IDENT;}
