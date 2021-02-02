@@ -15,14 +15,14 @@ extern YYSTYPE yylval;
 
 char filename[256] = "<stdin>";
 int line_number = 1;
-
 %}
 
 /* STATES */
 %x FILE_INFO
 %x CHARLIT
 %x STRING
-%x NUM
+%x INT_NUM
+%x FLOAT_NUM
 
 /* NUMERIC CONSTANTS */
 DEC     [1-9]+[0-9]*
@@ -59,24 +59,28 @@ P       [pP][+-]?{DEC}+
 
  /* NUMBERS */
 {DEC}           {yylval.number.i_value = strtoll(yytext, NULL, 10);
-                 BEGIN NUM;}
+                 BEGIN INT_NUM;}
 {OCT}           {yylval.number.i_value = strtoll(yytext, NULL, 8);
-                 BEGIN NUM;}
+                 BEGIN INT_NUM;}
 {HEX}           {yylval.number.i_value = strtoll(yytext, NULL, 16);
-                 BEGIN NUM;}
-{FLO}           {yylval.number.d_value = ;
-                 BEGIN NUM;}
+                 BEGIN INT_NUM;}
+{FLO}           |
+{DEC}{EXP}      |
+{FLO}{EXP}      |
+{HEX}{P}        {yylval.number.d_value = strtod(yytext, NULL);
+                 yylval.number.size_specifier = DOUBLE;
+                 BEGIN FLOAT_NUM;}
 
-
-<NUM>[uU]       {yylval.number.sign = 0;}
-<NUM>(ll|LL)    {yylval.number.size_specifier = LONGLONG}
-<NUM>[lL]       {yylval.number.size_specifier = LONG}
-<NUM>
-<NUM>[\t\r\v\f ]+   {BEGIN INITIAL; 
-                     return NUMBER;}
-[\n]                {line_number++; 
-                     BEGIN INITIAL; 
-                     return NUMBER}
+<INT_NUM>[uU]       {yylval.number.sign = 0;}
+<INT_NUM>(ll|LL)    {yylval.number.size_specifier = LONGLONG}
+<INT_NUM>[lL]       {yylval.number.size_specifier = LONG}
+<FlOAT_NUM>[fF]     {yylval.number.size_specifier = FLOAT}
+<FlOAT_NUM>[lL]     {yylval.number.size_specifier = LONGDOUBLE}
+<INT_NUM,FLOAT_NUM>[\t\r\v\f ]+     {BEGIN INITIAL; 
+                                     return NUMBER;}
+<INT_NUM,FLOAT_NUM>[\n]             {line_number++; 
+                                     BEGIN INITIAL; 
+                                     return NUMBER}
 
  /* OPERATORS */
 [!%&\|\+\-\*\/\^=\<\>\(\)\[\]\{\}\~\.\?,;:]     {return yytext[0];}
