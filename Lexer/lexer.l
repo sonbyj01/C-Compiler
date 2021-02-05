@@ -10,6 +10,7 @@
 %{
 #include "tokens-manual.h"
 #include "lexer.h"
+#include "lexerFunctions.h"
 
 extern YYSTYPE yylval;
 
@@ -179,18 +180,3 @@ _imaginary      {return _IMAGINARY;}
 /*  USER CODE  */
 /* ----------- */
 
-void warn_error_message(char *filename, int line, char *message, char *warn_error_message) {
-	fprintf(stderr, "%s: %d: %s: %s\n", filename, line, message, warn_error_message);
-}
-
-void append_string(char *buf, char escape) {
-	if(buf == (char *)NULL) {
-		yylval.string.word[yylval.string.length] = c;
-		yylval.string.length++;
-	} else {
-		for(int i = 0; i < strlen(buf); i++) {
-			yylval.string.word[yylval.string.length + i] = buf[i];
-		}
-		yylval.string.length += strlen(buf);
-	}
-}

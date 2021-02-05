@@ -1,6 +1,9 @@
 /* Andrew Lorber & Henry Son */
 /* Compilers - Lexical Analyzer Header File */
 
+#ifndef LEXER_H
+#define LEXER_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -35,6 +38,4 @@ typedef union {
 
 YYSTYPE yylval;
 
-// Helper Functions
-void warn_error_message(char *filename, int line, char *message, char *type);
-void append_string(char *buf, char escape);
+#endif // LEXER_H
