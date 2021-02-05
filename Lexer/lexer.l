@@ -153,8 +153,7 @@ _complex        {return _COMPLEX;}
 _imaginary      {return _IMAGINARY;}
 
  /* IDENTIFIERS */
-[a-zA-Z_][a-zA-Z0-9_]*		{yylval.ident.name = strdup(yytext); return IDENT;}
-
+[a-zA-Z_][a-zA-Z0-9_]*		{yylval.ident = strdup(yytext); return IDENT;}
 
  /* CHARACTER LITERALS */
 

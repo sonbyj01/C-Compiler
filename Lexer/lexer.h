@@ -30,6 +30,7 @@ typedef union {
     num_type number;
     char c;
     char *string;
+    char *ident;
 } YYSTYPE;
 
 YYSTYPE yylval;
