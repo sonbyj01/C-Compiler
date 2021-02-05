@@ -41,7 +41,7 @@ P       [pP][+-]?{DEC}+
  /* FILE INFORMATION */
 #                                   {BEGIN FILE_INFO;}
 <FILE_INFO>^[0-9]+                  { /* Get line number in base 10 */
-                                    line = (int)strtol(yytext, (char **)NULL, 10;)}
+                                    line_number = (int)strtol(yytext, (char **)NULL, 10;)}
 
 <FILE_INFO>\"(\\.|[^\\\"])*\"       { /* copy file name */
                                     strncpy(filename, yytext + 1, strlen(yytext) - 2);
@@ -160,6 +160,17 @@ _imaginary      {return _IMAGINARY;}
 
  /* STRINGS */
 
+
+ /* ESCAPE SEQUENCES (STRING & CHAR) */
+
+ // Simple
+<CHARLIT,STRING>\\[abfnrtv'"\?\\]       {}
+
+ // Octal
+<CHARLIT,STRING>\\[0-7]{1,3}            {}
+
+ // Hex
+<CHARLIT,STRING>\\x[a-fA-F0-9]+         {}
 
 
 
