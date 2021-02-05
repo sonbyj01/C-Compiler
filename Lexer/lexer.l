@@ -157,10 +157,11 @@ _imaginary      {return _IMAGINARY;}
 [a-zA-Z_][a-zA-Z0-9_]*		{yylval.ident = strdup(yytext); return IDENT;}
 
  /* CHARACTER LITERALS */
+[LuU]?\'        {BEGIN CHARLIT;}
 
 
  /* STRINGS */
-
+[LuU]?\"        {BEGIN STRING;}
 
  /* ESCAPE SEQUENCES (STRING & CHAR) */
 

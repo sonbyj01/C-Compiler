@@ -10,8 +10,24 @@
 #include <errno.h>
 #include <string.h>
 
+// Creates / begins string
+void create_string();
+
+// Adds chars to string
+void append_string();
+
+// Adds numerical escape characters to string
+void append_num_escape();
+
+// Completes String
+void complete_string();
+
+// Prints String
+void print_string();
+
+// Prints error message
 void warn_error_message(char *filename, int line, char *message, char *type);
-void append_string(char *buf, char escape);
+
 
 
 #endif // LEXERFUNCTIONS_H
