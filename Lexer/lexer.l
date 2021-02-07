@@ -42,7 +42,7 @@ P       [pP][+-]?{DEC}+
  /* FILE INFORMATION */
 #                                   {BEGIN FILE_INFO;}
 <FILE_INFO>^[0-9]+                  { /* Get line number in base 10 */
-                                    line_number = (int)strtol(yytext, (char **)NULL, 10;)}
+                                    line_number = (int)strtol(yytext, (char **)NULL, 10);}
 
 <FILE_INFO>\"(\\.|[^\\\"])*\"       { /* copy file name */
                                     strncpy(filename, yytext + 1, strlen(yytext) - 2);
@@ -271,11 +271,13 @@ int main() {
             case CHARLIT:
                     printf("CHARLIT\t");
                     print_string(yylval.string);
+                    printf("\n");
                     break;
 
             case STRING:
                     printf("STRING\t");
                     print_string(yylval.string);
+                    printf("\n");
                     break;
 
             // KEYWORDS

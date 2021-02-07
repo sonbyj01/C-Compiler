@@ -12,3 +12,6 @@ lexer.yy.c: lexer.l
 
 lexerFunctions.o: lexerFunctions.h lexerFunctions.c
 		gcc -c -o lexerFunctions.o lexerFunctions.c
+
+clean:
+		rm -f lexerFunctions.o lexer.yy.c lexer.yy.o lexer
