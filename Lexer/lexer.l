@@ -154,33 +154,41 @@ _complex        {return _COMPLEX;}
 _imaginary      {return _IMAGINARY;}
 
  /* IDENTIFIERS */
-[a-zA-Z_][a-zA-Z0-9_]*		{yylval.ident = strdup(yytext); return IDENT;}
+[a-zA-Z_][a-zA-Z0-9_]*      {yylval.ident = strdup(yytext); 
+                             return IDENT;}
 
  /* CHARACTER LITERALS */
-[LuU]?\'        {BEGIN CHARLIT;
-                 create_string();}
-<CHARLIT>\'              {BEGIN INITIAL;
-                 complete_string();}
-
+[LuU]?\'                    {BEGIN CHARLIT;
+                             create_string();}
+<CHARLIT>[^\'\\\n]          {append_string(yytext);}
+<CHARLIT>\'                 {BEGIN INITIAL;
+                             yylval.string = complete_string();
+                             return CHARLIT;}
 
  /* STRINGS */
-[LuU]?\"        {BEGIN STRING;
-                 create_string();}
-<STRING>\"              {BEGIN INITIAL;
-                 complete_string();}
+[LuU]?\"                    {BEGIN STRING;
+                             create_string();}
+<STRING>[^\"\\\n]           {append_string(yytext);}
+<STRING>\"                  {BEGIN INITIAL;
+                             yylval.string = complete_string();
+                             return STRING;}
 
  /* ESCAPE SEQUENCES (STRING & CHAR) */
 
  // Simple
-<CHARLIT,STRING>\\[abfnrtv'"\?\\]       {append_escape(yytext,0);}
+<CHARLIT,STRING>\\[abfrntv'"\?\\]      {append_escape(yytext,0);}
 
  // Octal
-<CHARLIT,STRING>\\[0-7]{1,3}            {append_escape(yytext,8);}
+<CHARLIT,STRING>\\[0-7]{1,3}           {append_escape(yytext,8);}
 
  // Hex
-<CHARLIT,STRING>\\x[a-fA-F0-9]+         {append_escape(yytext,16);}
+<CHARLIT,STRING>\\x[a-fA-F0-9]+        {append_escape(yytext,16);}
 
-
+ /* ERRORS */
+<CHARLIT,STRING>\n      {print_error(filename,line_number,yytext,"Unterminated string/char.");
+                         line_number++;}
+<CHARLIT,STRING>.       {print_error(filename,line_number,yytext,"Unknown character.")}
+.                       {print_error(filename,line_number,yytext,"Unknown character.")}
 
 %%
 /* ----------- */

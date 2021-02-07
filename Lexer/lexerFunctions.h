@@ -19,15 +19,13 @@ void append_string(char *text);
 // Adds escape characters to string
 void append_escape(char* text, int base);
 
-// Completes String
-void complete_string();
+// Completes string
+char* complete_string();
 
-// Prints String
-void print_string();
+// Prints string
+void print_string(char *string);
 
 // Prints error message
-void warn_error_message(char *filename, int line, char *message, char *type);
-
-
+void print_error(char *filename, int line_num, char* text, char* message);
 
 #endif // LEXERFUNCTIONS_H

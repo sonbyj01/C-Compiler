@@ -18,7 +18,7 @@ void create_string() {
 
 // Adds chars to string
 void append_string(char *text) {
-
+	string_buffer[buf_pos++] = text[0];
 }
 
 // Adds escape characters to string
@@ -41,15 +41,19 @@ void append_escape(char* text, int base) {
 }
 
 // Completes String
-void complete_string() {
+char* complete_string() {
+	// Adds null terminator
+	string_buffer[buf_pos++] = '\0';
 
+	// Returns pointer to copy of string
+	return strdup(string_buffer);
 }
 
 // Prints String
-void print_string() {
-
+void print_string(char *string) {
+	
 }
 
-void warn_error_message(char *filename, int line, char *message, char *warn_error_message) {
-	fprintf(stderr, "%s: %d: %s: %s\n", filename, line, message, warn_error_message);
+void print_error(char *filename, int line_num, char* text, char* message) {
+	fprintf(stderr, "%s: line %d: %s - %s\n", filename, line_num, text, message);
 }
