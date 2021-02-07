@@ -65,54 +65,61 @@ P       [pP][+-]?{DEC}+
 
  /* NUMBERS */
 {DEC}           {yylval.number.i_value = strtoll(yytext, NULL, 10);
+                 yylval.number.is_signed = UNSIGNED_TYPE;
+                 yylval.number.size_specifier = INT_TYPE;
                  BEGIN INT_NUM;}
 {OCT}           {yylval.number.i_value = strtoll(yytext, NULL, 8);
+                 yylval.number.is_signed = UNSIGNED_TYPE;
+                 yylval.number.size_specifier = INT_TYPE;
                  BEGIN INT_NUM;}
 {HEX}           {yylval.number.i_value = strtoll(yytext, NULL, 16);
+                 yylval.number.is_signed = UNSIGNED_TYPE;
+                 yylval.number.size_specifier = INT_TYPE;
                  BEGIN INT_NUM;}
 {FLO}           |
 {DEC}{EXP}      |
 {FLO}{EXP}      |
 {HEX}{P}        {yylval.number.d_value = strtod(yytext, NULL);
-                 yylval.number.size_specifier = DOUBLE;
+                 yylval.number.is_signed = UNSIGNED_TYPE;
+                 yylval.number.size_specifier = DOUBLE_TYPE;
                  BEGIN FLOAT_NUM;}
 
-<INT_NUM>[uU]       {yylval.number.sign = 0;}
-<INT_NUM>(ll|LL)    {yylval.number.size_specifier = LONGLONG}
-<INT_NUM>[lL]       {yylval.number.size_specifier = LONG}
-<FlOAT_NUM>[fF]     {yylval.number.size_specifier = FLOAT}
-<FlOAT_NUM>[lL]     {yylval.number.size_specifier = LONGDOUBLE}
+<INT_NUM>[uU]       {yylval.number.is_signed = SIGNED_TYPE;}
+<INT_NUM>(ll|LL)    {yylval.number.size_specifier = LONGLONG_TYPE;}
+<INT_NUM>[lL]       {yylval.number.size_specifier = LONG_TYPE;}
+<FLOAT_NUM>[fF]     {yylval.number.size_specifier = FLOAT_TYPE;}
+<FLOAT_NUM>[lL]     {yylval.number.size_specifier = LONGDOUBLE_TYPE;}
 <INT_NUM,FLOAT_NUM>[\t\r\v\f ]+     {BEGIN INITIAL; 
                                      return NUMBER;}
 <INT_NUM,FLOAT_NUM>[\n]             {line_number++; 
                                      BEGIN INITIAL; 
-                                     return NUMBER}
+                                     return NUMBER;}
 
  /* OPERATORS */
 [!%&\|\+\-\*\/\^=\<\>\(\)\[\]\{\}\~\.\?,;:]     {return yytext[0];}
 
-indsel          {return INDSEL}
-"++"            {return PLUSPLUS}
-"--"            {return MINUSMINUS}
-"<<"            {return SHL}
-">>"            {return SHR}
-"<="            {return LTEQ}
-">="            {return GTEQ}
-"=="            {return EQEQ}
-"!="            {return NOTEQ}
-"&&"            {return LOGAND}
-"||"            {return LOGOR}
-"..."           {return ELLIPSIS}
-"*="            {return TIMESEQ}
-"/="            {return DIVEQ}
-"%="            {return MODEQ}
-"+="            {return PLUSEQ}
-"-="            {return MINUSEQ}
-"<<="           {return SHLEQ}
-">>="           {return SHREQ}
-"&="            {return ANDEQ}
-"|="            {return OREQ}
-"^="            {return XOREQ}
+indsel          {return INDSEL;}
+"++"            {return PLUSPLUS;}
+"--"            {return MINUSMINUS;}
+"<<"            {return SHL;}
+">>"            {return SHR;}
+"<="            {return LTEQ;}
+">="            {return GTEQ;}
+"=="            {return EQEQ;}
+"!="            {return NOTEQ;}
+"&&"            {return LOGAND;}
+"||"            {return LOGOR;}
+"..."           {return ELLIPSIS;}
+"*="            {return TIMESEQ;}
+"/="            {return DIVEQ;}
+"%="            {return MODEQ;}
+"+="            {return PLUSEQ;}
+"-="            {return MINUSEQ;}
+"<<="           {return SHLEQ;}
+">>="           {return SHREQ;}
+"&="            {return ANDEQ;}
+"|="            {return OREQ;}
+"^="            {return XOREQ;}
 
  /* KEYWORDS */
 auto            {return AUTO;}
@@ -120,7 +127,7 @@ break           {return BREAK;}
 case            {return CASE;}
 char            {return CHAR;}
 const           {return CONST;}
-continue        {return CONSTANT;}
+continue        {return CONTINUE;}
 default         {return DEFAULT;}
 do              {return DO;}
 double          {return DOUBLE;}
@@ -175,23 +182,107 @@ _imaginary      {return _IMAGINARY;}
 
  /* ESCAPE SEQUENCES (STRING & CHAR) */
 
- // Simple
-<CHARLIT,STRING>\\[abfrntv'"\?\\]      {append_escape(yytext,0);}
+ /* Simple */
+<CHARLIT,STRING>\\[abfrntv\'\"\?\\]    {append_escape(yytext,0);}
 
- // Octal
+ /* Octal */
 <CHARLIT,STRING>\\[0-7]{1,3}           {append_escape(yytext,8);}
 
- // Hex
+ /* Hex */
 <CHARLIT,STRING>\\x[a-fA-F0-9]+        {append_escape(yytext,16);}
 
  /* ERRORS */
 <CHARLIT,STRING>\n      {print_error(filename,line_number,yytext,"Unterminated string/char.");
                          line_number++;}
-<CHARLIT,STRING>.       {print_error(filename,line_number,yytext,"Unknown character.")}
-.                       {print_error(filename,line_number,yytext,"Unknown character.")}
+<CHARLIT,STRING>.       {print_error(filename,line_number,yytext,"Unknown character.");}
+.                       {print_error(filename,line_number,yytext,"Unknown character.");}
 
 %%
 /* ----------- */
 /*  USER CODE  */
 /* ----------- */
+
+int main() {
+    int token;
+
+    while(token = yylex()) {
+        // Prints file info 
+        printf("%s\t%d\t", filename, line_number);
+
+        // Check type of token
+        switch(token) {
+            case IDENT:
+                    printf("IDENT\t%s\n", yylval.ident);
+                    break;
+            
+            case NUMBER:
+                    printf("NUMBER\t");
+                    
+                    // Checks type of number for printing
+                    int num_type = yylval.number.size_specifier;
+                    // Int
+                    if(num_type == INT_TYPE || num_type == LONG_TYPE || num_type == LONGLONG_TYPE){
+                        printf("INTEGER\t");
+
+                        // Prints value
+                        printf("%lli\t", yylval.number.i_value);
+
+                        // Checks if unsigned
+                        if(yylval.number.is_signed == UNSIGNED_TYPE) {
+                            printf("UNSIGNED,");
+                        }
+
+                        // Prints type
+                        switch(num_type) {
+                            case INT_TYPE:
+                                    printf("INT_TYPE\n");
+                                    break;
+                            case LONG_TYPE:
+                                    printf("LONG_TYPE\n");
+                                    break;
+                            case LONGLONG_TYPE:
+                                    printf("LONGLONG_TYPE\n");
+                                    break;
+                        }
+                    }
+                    // Real
+                    else {
+                        printf("REAL\t");
+
+                        // Prints value
+                        printf("%Lf\t", yylval.number.d_value);
+
+                        // Prints type
+                        switch(num_type) {
+                            case FLOAT_TYPE:
+                                    printf("FLOAT_TYPE\n");
+                                    break;
+                            case DOUBLE_TYPE:
+                                    printf("DOUBLE_TYPE\n");
+                                    break;
+                            case LONGDOUBLE_TYPE:
+                                    printf("LONGDOUBLE_TYPE\n");
+                                    break;
+                        }
+                    }
+
+                    break;
+            
+            case CHARLIT:
+                    printf("CHARLIT\t");
+                    print_string(yylval.string);
+                    break;
+
+            case STRING:
+                    printf("STRING\t");
+                    print_string(yylval.string);
+                    break;
+
+            // KEYWORDS
+            default:
+                    printf("%c\n", token);
+        }
+    }
+}
+
 

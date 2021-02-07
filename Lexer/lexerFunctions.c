@@ -51,7 +51,9 @@ char* complete_string() {
 
 // Prints String
 void print_string(char *string) {
-	
+	for(int i = 0; string[i] != '\0' && i < STRING_SIZE; i++) {
+		printf("%c", string[i]);
+	}
 }
 
 void print_error(char *filename, int line_num, char* text, char* message) {
