@@ -157,22 +157,28 @@ _imaginary      {return _IMAGINARY;}
 [a-zA-Z_][a-zA-Z0-9_]*		{yylval.ident = strdup(yytext); return IDENT;}
 
  /* CHARACTER LITERALS */
-[LuU]?\'        {BEGIN CHARLIT;}
+[LuU]?\'        {BEGIN CHARLIT;
+                 create_string();}
+<CHARLIT>\'              {BEGIN INITIAL;
+                 complete_string();}
 
 
  /* STRINGS */
-[LuU]?\"        {BEGIN STRING;}
+[LuU]?\"        {BEGIN STRING;
+                 create_string();}
+<STRING>\"              {BEGIN INITIAL;
+                 complete_string();}
 
  /* ESCAPE SEQUENCES (STRING & CHAR) */
 
  // Simple
-<CHARLIT,STRING>\\[abfnrtv'"\?\\]       {}
+<CHARLIT,STRING>\\[abfnrtv'"\?\\]       {append_escape(yytext,0);}
 
  // Octal
-<CHARLIT,STRING>\\[0-7]{1,3}            {}
+<CHARLIT,STRING>\\[0-7]{1,3}            {append_escape(yytext,8);}
 
  // Hex
-<CHARLIT,STRING>\\x[a-fA-F0-9]+         {}
+<CHARLIT,STRING>\\x[a-fA-F0-9]+         {append_escape(yytext,16);}
 
 
 

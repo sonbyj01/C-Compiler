@@ -14,10 +14,10 @@
 void create_string();
 
 // Adds chars to string
-void append_string();
+void append_string(char *text);
 
-// Adds numerical escape characters to string
-void append_num_escape();
+// Adds escape characters to string
+void append_escape(char* text, int base);
 
 // Completes String
 void complete_string();
