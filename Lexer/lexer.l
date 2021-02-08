@@ -156,9 +156,9 @@ unsigned        {return UNSIGNED;}
 void            {return VOID;}
 volatile        {return VOLATILE;}
 while           {return WHILE;}
-_bool           {return _BOOL;}
-_complex        {return _COMPLEX;}
-_imaginary      {return _IMAGINARY;}
+_Bool           {return _BOOL;}
+_Complex        {return _COMPLEX;}
+_Imaginary      {return _IMAGINARY;}
 
  /* IDENTIFIERS */
 [a-zA-Z_][a-zA-Z0-9_]*      {yylval.ident = strdup(yytext); 
@@ -169,7 +169,7 @@ _imaginary      {return _IMAGINARY;}
                              create_string();}
 <CHARLIT>[^\'\\\n]          {append_string(yytext);}
 <CHARLIT>\'                 {BEGIN INITIAL;
-                             yylval.string = complete_string();
+                             yylval.string = complete_string(1);
                              return CHARLIT;}
 
  /* STRINGS */
@@ -177,13 +177,13 @@ _imaginary      {return _IMAGINARY;}
                              create_string();}
 <STRING>[^\"\\\n]           {append_string(yytext);}
 <STRING>\"                  {BEGIN INITIAL;
-                             yylval.string = complete_string();
+                             yylval.string = complete_string(0);
                              return STRING;}
 
  /* ESCAPE SEQUENCES (STRING & CHAR) */
 
  /* Simple */
-<CHARLIT,STRING>\\[abfrntv0\'\"\\]    {append_escape(yytext,0);}
+<CHARLIT,STRING>\\[abfrntv0\'\"\\]      {append_escape(yytext,0);}
 
  /* Octal */
 <CHARLIT,STRING>\\[0-7]{1,3}           {append_escape(yytext,8);}
@@ -282,7 +282,12 @@ int main() {
 
             // KEYWORDS
             default:
-                    printf("%c\n", token);
+                    // Checks if ASCII
+                    if(token < 256) {
+                        printf("%c\n", token);
+                    } else {
+                        print_keyword(token);
+                    }
         }
     }
 }

@@ -21,12 +21,14 @@ void append_string(char *text);
 void append_escape(char* text, int base);
 
 // Completes string
-char* complete_string();
+char* complete_string(int is_char);
 
 // Prints string
 void print_string(char *string);
 
-// Prints error message
+// Prints error messages
 void print_error(char *filename, int line_num, char* text, char* message);
+
+void print_keyword(int keyword);
 
 #endif // LEXERFUNCTIONS_H

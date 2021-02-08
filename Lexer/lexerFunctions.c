@@ -43,9 +43,22 @@ void append_escape(char* text, int base) {
 }
 
 // Completes String
-char* complete_string() {
-	// Adds null terminator
-	string_buffer[buf_pos++] = '\0';
+// If char, only saves first character in buffer
+char* complete_string(int is_char) {
+	if(is_char) {
+		// If escape character, need first two chars
+		if(string_buffer[0] == '\\') {
+			// Adds null terminator
+			string_buffer[2] = '\0';
+			// Adds zero after null to mark end of char
+			string_buffer[3] = 0;
+		} else {
+			string_buffer[1] = '\0';
+			string_buffer[2] = 0;
+		}
+	} else {
+		string_buffer[buf_pos++] = '\0';
+	}
 
 	// Returns pointer to copy of string
 	return strdup(string_buffer);
@@ -62,6 +75,23 @@ void print_string(char *string) {
 	}
 }
 
+// Prints error messages
 void print_error(char *filename, int line_num, char* text, char* message) {
 	fprintf(stderr, "%s: line %d: %s - %s\n", filename, line_num, text, message);
+}
+
+void print_keyword(int keyword) {
+	// List of keywords as strings
+	char* keyword_strings[] = {"IDENT", "CHARLIT", "STRING", "NUMBER", "INDSEL", 
+		"PLUSPLUS", "MINUSMINUS", "SHL", "SHR", "LTEQ", "GTEQ", "EQEQ", "NOTEQ",
+		"LOGAND", "LOGOR", "ELLIPSIS", "TIMESEQ", "DIVEQ", "MODEQ", "PLUSEQ",
+		"MINUSEQ", "SHLEQ", "SHREQ", "ANDEQ", "OREQ", "XOREQ", "AUTO", "BREAK",
+		"CASE", "CHAR", "CONST", "CONTINUE", "DEFAULT", "DO", "DOUBLE", "ELSE",
+		"ENUM", "EXTERN", "FLOAT", "FOR", "GOTO", "IF", "INLINE", "INT", "LONG",
+		"REGISTER", "RESTRICT", "RETURN", "SHORT", "SIGNED", "SIZEOF", "STATIC",
+		"STRUCT", "SWITCH", "TYPEDEF", "UNION", "UNSIGNED", "VOID", "VOLATILE",
+		"WHILE", "_BOOL", "_COMPLEX", "_IMAGINARY"};
+	
+	// Subtracts keyword value from value of IDENT to get index in list
+	printf("%s\n",keyword_strings[keyword - 257]);
 }
