@@ -41,8 +41,8 @@ P       [pP][+-]?{DEC}+
 
  /* FILE INFORMATION */
 #                                   {BEGIN FILE_INFO;}
-<FILE_INFO>^[0-9]+                  { /* Get line number in base 10 */
-                                    line_number = (int)strtol(yytext, (char **)NULL, 10);}
+<FILE_INFO>[0-9]+                   { /* Get line number in base 10 */
+                                     line_number = (int)strtol(yytext, NULL, 10);}
 
 <FILE_INFO>\"(\\.|[^\\\"])*\"       { /* copy file name */
                                     strncpy(filename, yytext + 1, strlen(yytext) - 2);
@@ -102,7 +102,7 @@ P       [pP][+-]?{DEC}+
  /* OPERATORS */
 [!%&\|\+\-\*\/\^=\<\>\(\)\[\]\{\}\~\.\?,;:]     {return yytext[0];}
 
-indsel          {return INDSEL;}
+"->"            {return INDSEL;}
 "++"            {return PLUSPLUS;}
 "--"            {return MINUSMINUS;}
 "<<"            {return SHL;}
