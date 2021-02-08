@@ -94,6 +94,10 @@ P       [pP][+-]?{DEC}+
 <INT_NUM,FLOAT_NUM>[\n]             {line_number++; 
                                      BEGIN INITIAL; 
                                      return NUMBER;}
+<INT_NUM,FLOAT_NUM>.                {BEGIN INITIAL;
+                                     /* Pushes back current character */
+                                     yyless(yyleng - 1);
+                                     return NUMBER;}
 
  /* OPERATORS */
 [!%&\|\+\-\*\/\^=\<\>\(\)\[\]\{\}\~\.\?,;:]     {return yytext[0];}
