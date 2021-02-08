@@ -183,7 +183,7 @@ _imaginary      {return _IMAGINARY;}
  /* ESCAPE SEQUENCES (STRING & CHAR) */
 
  /* Simple */
-<CHARLIT,STRING>\\[abfrntv\'\"\?\\]    {append_escape(yytext,0);}
+<CHARLIT,STRING>\\[abfrntv0\'\"\\]    {append_escape(yytext,0);}
 
  /* Octal */
 <CHARLIT,STRING>\\[0-7]{1,3}           {append_escape(yytext,8);}

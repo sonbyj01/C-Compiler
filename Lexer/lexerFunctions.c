@@ -31,9 +31,11 @@ void append_escape(char* text, int base) {
 		string_buffer[buf_pos++] = '\\';
 		string_buffer[buf_pos++] = text[1];
 	} else if(base == 8) {
-		string_buffer[buf_pos++] = strtol(text+1, NULL, 8);
+		int oct = (int)strtol(text+1, NULL, 8);
+		string_buffer[buf_pos++] = 255 < oct ? 255 : oct;
 	} else if(base == 16) {
-		string_buffer[buf_pos++] = strtol(text+2, NULL, 16);
+		int hex = (int)strtol(text+2, NULL, 16);
+		string_buffer[buf_pos++] = 255 < hex ? 255 : hex;
 	} else {
 		// Should never have incorrect input, but checks anyways
 		// PRINT ERROR
@@ -51,8 +53,12 @@ char* complete_string() {
 
 // Prints String
 void print_string(char *string) {
-	for(int i = 0; string[i] != '\0' && i < STRING_SIZE; i++) {
-		printf("%c", string[i]);
+	for(int i = 0; i < STRING_SIZE && (string[i] != '\0' || string[i+1] != 0); i++) {
+		if(isprint(string[i])) {
+			printf("%c", string[i]);
+		} else {
+			printf("\\%03o", (unsigned char)string[i]);
+		}
 	}
 }
 
