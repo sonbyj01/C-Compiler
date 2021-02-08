@@ -30,7 +30,7 @@ int line_number = 1;
 DEC     [1-9]+[0-9]*
 OCT     0[0-7]*
 HEX     0[xX][a-fA-F0-9]+
-FLO     [0-9]*\.[0-9]*
+FLO     ([0-9]*\.[0-9]+)|([0-9]+\.[0-9]*)
 EXP     [eE][+-]?{DEC}+
 P       [pP][+-]?{DEC}+
 
@@ -77,7 +77,7 @@ P       [pP][+-]?{DEC}+
                  yylval.number.size_specifier = INT_TYPE;
                  BEGIN INT_NUM;}
 {FLO}           |
-{DEC}{EXP}      |
+0?{DEC}{EXP}    |
 {FLO}{EXP}      |
 {HEX}{P}        {yylval.number.d_value = strtod(yytext, NULL);
                  yylval.number.is_signed = SIGNED_TYPE;
