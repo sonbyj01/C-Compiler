@@ -28,7 +28,7 @@ int line_number = 1;
 
 /* NUMERIC CONSTANTS */
 DEC     [1-9]+[0-9]*
-OCT     0[0-7]+
+OCT     0[0-7]*
 HEX     0[xX][a-fA-F0-9]+
 FLO     [0-9]*\.[0-9]*
 EXP     [eE][+-]?{DEC}+
@@ -65,26 +65,26 @@ P       [pP][+-]?{DEC}+
 
  /* NUMBERS */
 {DEC}           {yylval.number.i_value = strtoll(yytext, NULL, 10);
-                 yylval.number.is_signed = UNSIGNED_TYPE;
+                 yylval.number.is_signed = SIGNED_TYPE;
                  yylval.number.size_specifier = INT_TYPE;
                  BEGIN INT_NUM;}
 {OCT}           {yylval.number.i_value = strtoll(yytext, NULL, 8);
-                 yylval.number.is_signed = UNSIGNED_TYPE;
+                 yylval.number.is_signed = SIGNED_TYPE;
                  yylval.number.size_specifier = INT_TYPE;
                  BEGIN INT_NUM;}
 {HEX}           {yylval.number.i_value = strtoll(yytext, NULL, 16);
-                 yylval.number.is_signed = UNSIGNED_TYPE;
+                 yylval.number.is_signed = SIGNED_TYPE;
                  yylval.number.size_specifier = INT_TYPE;
                  BEGIN INT_NUM;}
 {FLO}           |
 {DEC}{EXP}      |
 {FLO}{EXP}      |
 {HEX}{P}        {yylval.number.d_value = strtod(yytext, NULL);
-                 yylval.number.is_signed = UNSIGNED_TYPE;
+                 yylval.number.is_signed = SIGNED_TYPE;
                  yylval.number.size_specifier = DOUBLE_TYPE;
                  BEGIN FLOAT_NUM;}
 
-<INT_NUM>[uU]       {yylval.number.is_signed = SIGNED_TYPE;}
+<INT_NUM>[uU]       {yylval.number.is_signed = UNSIGNED_TYPE;}
 <INT_NUM>(ll|LL)    {yylval.number.size_specifier = LONGLONG_TYPE;}
 <INT_NUM>[lL]       {yylval.number.size_specifier = LONG_TYPE;}
 <FLOAT_NUM>[fF]     {yylval.number.size_specifier = FLOAT_TYPE;}
@@ -235,13 +235,13 @@ int main() {
                         // Prints type
                         switch(num_type) {
                             case INT_TYPE:
-                                    printf("INT_TYPE\n");
+                                    printf("INT\n");
                                     break;
                             case LONG_TYPE:
-                                    printf("LONG_TYPE\n");
+                                    printf("LONG\n");
                                     break;
                             case LONGLONG_TYPE:
-                                    printf("LONGLONG_TYPE\n");
+                                    printf("LONGLONG\n");
                                     break;
                         }
                     }
@@ -255,13 +255,13 @@ int main() {
                         // Prints type
                         switch(num_type) {
                             case FLOAT_TYPE:
-                                    printf("FLOAT_TYPE\n");
+                                    printf("FLOAT\n");
                                     break;
                             case DOUBLE_TYPE:
-                                    printf("DOUBLE_TYPE\n");
+                                    printf("DOUBLE\n");
                                     break;
                             case LONGDOUBLE_TYPE:
-                                    printf("LONGDOUBLE_TYPE\n");
+                                    printf("LONGDOUBLE\n");
                                     break;
                         }
                     }
