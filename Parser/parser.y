@@ -77,57 +77,61 @@ decl_func      : decl_stmt {}
 func           : decl_specs declarator '{' {
                 struct sym *search = NULL;
                 if(head->u.ident.name != NULL){
-                  search = search_all(curr_scope, head->u.ident.name, ID_FUNC);
+                	search = search_all(curr_scope, head->u.ident.name, ID_FUNC);
                 }
                 if(search == NULL){
-                  ast_node_link(&head, &tail, $1);
-                  struct sym *n = add_sym(head, curr_scope, filename, line);
-                  add_stg_class(n);
-                  head = (struct ast_node *)NULL;
-                  tail = (struct ast_node *)NULL;
-                  print_sym(n, 0);
+                	ast_node_link(&head, &tail, $1);
+                	struct sym *n = add_sym(head, curr_scope, filename, line);
+                	add_stg_class(n);
+                	head = (struct ast_node *)NULL;
+                	tail = (struct ast_node *)NULL;
+                	print_sym(n, 0);
                 } else if(search->e.func.complete == 1){
-                  /* previously defined func */
+                	/* previously defined func */
                 } else{
-                  print_sym(search, 0);
-                  head = (struct ast_node *)NULL;
-                  tail = (struct ast_node *)NULL;
+            		print_sym(search, 0);
+                	head = (struct ast_node *)NULL;
+                	tail = (struct ast_node *)NULL;
                 }
                 enter_scope(SCOPE_FUNC);
-               }  decl_stmt_list '}' {
-                struct sym_tab *tmp = curr_scope;
-                exit_scope();
-                curr_scope->symsE->e.func.complete = 1;
-                print_ast($$, 0);
-                /* PRINT AST DUMP FOR FUNC */
-               }
-               ;
+               	}  decl_stmt_list '}' {
+                	struct sym_tab *tmp = curr_scope;
+                	exit_scope();
+                	curr_scope->symsE->e.func.complete = 1;
+                	print_ast($$, 0);
+                /	* PRINT AST DUMP FOR FUNC */
+               	}
+               	;
 
-decl_stmt_list : decl_stmt {}
-               | decl_stmt_list decl_stmt {}
-               ;
+decl_stmt_list : decl_stmt {$$ = $1;}
+				| decl_stmt_list decl_stmt {
+						$$ = ast_node_alloc(AST_TOP_EXPR_ST);
+					$$->u.top_expr_st.left = $1;
+					$$->u.top_expr_st.right = $2;
+				}
+				;
 
-decl_stmt      : decl {}
-               | stmt {}
-               ;
+decl_stmt      	: decl {$$ = $1;}
+				| stmt {$$ = $1;}
+				;
 
-init_clause    : expr
-               | decl
-               ;
+init_clause    	: expr
+				| decl
+				;
 
-stmt           : expr_statement
-               | compound_stmt
-               | iter_stmt
-               | switch_stmt
-               | return_stmt
-               | continue_stmt
-               | break_stmt
-               | goto_stmt
-               | labeled_stmt
-               | ';' {
-                 /* NULL STATEMENT */
-               }
-               ;
+stmt           	: expr_statement {$$ = $1;}
+				| compound_stmt {$$ = $1;}
+				| iter_stmt {$$ = $1;}
+				| switch_stmt {$$ = $1;}
+				| return_stmt {$$ = $1;}
+				| continue_stmt {$$ = $1;}
+				| break_stmt {$$ = $1;}
+				| goto_stmt {$$ = $1;}
+				| labeled_stmt {$$ = $1;}
+				| ';' {
+					/* NULL STATEMENT */
+				}
+				;
 
 switch_stmt    : SWITCH '(' expr ')' stmt {
 
